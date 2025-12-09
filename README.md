@@ -14,13 +14,13 @@
 
 ## Demo
 
-Check out a live demo: [Click for demo](https://sahab-uab.github.io/verifyJS/)
+Check out a live demo: [Click for demo](https://codesuab.github.io/verifyJS/)
 
 ## Installation
 
 1. Clone the repository or download the files:
    ```sh
-   git clone https://github.com/yourusername/verifyjs.git
+   git clone https://github.com/codesuab/verifyjs.git
    ```
 2. Include the JavaScript file in your HTML:
    ```html
