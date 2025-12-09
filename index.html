@@ -1,67 +1,657 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>verifyJS Example</title>
+    <title>VerifyJS - Professional Demo</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+            colors: {
+              brand: {
+                50: "#eff6ff",
+                100: "#dbeafe",
+                200: "#bfdbfe",
+                300: "#93c5fd",
+                400: "#60a5fa",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                800: "#1e40af",
+                900: "#1e3a8a",
+                950: "#172554",
+              },
+            },
+          },
+        },
+      };
+    </script>
+
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        height: 100vh;
-        margin: 0;
-        background-color: #684da6;
+      /* Custom scrollbar for code blocks */
+      .custom-scrollbar::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
       }
-      #captchaForm {
-        background: #ffffffcf;
-        padding: 20px;
-        border: 1px solid #ddd;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-        text-align: center;
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #1f2937;
       }
-      .captchawraper {
-        margin-bottom: 20px;
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #4b5563;
       }
-      .fild {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #6b7280;
       }
-      #captchaImage {
-        border: 1px solid #ddd;
+
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+
+      .dark .glass-panel {
+        background: rgba(17, 24, 39, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
     </style>
   </head>
-  <body>
-    <div id="captchaForm">
-      <div class="captchawraper">
-        <img id="captcha" width="200" height="50" alt="CAPTCHA" />
-      </div>
-      <div class="fild">
-        <input type="text" id="captchaInput" required />
-        <button type="button" onclick="captchaRefresh()">Refresh</button>
-      </div>
-      <button style="margin-top: 10px" onclick="validate()">Submit</button>
+  <body
+    class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 antialiased transition-colors duration-300"
+  >
+    <!-- Decorative Background Gradients -->
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-0 left-1/4 w-96 h-96 bg-brand-400/20 blur-3xl transform -translate-y-1/2"
+      ></div>
+      <div
+        class="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-400/20 blur-3xl transform translate-y-1/2"
+      ></div>
     </div>
-    <div style="display: flex; align-items: center; margin-top: 20px;">
-      <!-- GitHub Star Button for the Repository -->
-      <iframe
-        src="https://ghbtns.com/github-btn.html?user=sahab-uab&repo=verifyJS&type=star&count=true"
-        frameborder="0"
-        scrolling="0"
-        height="30"
-        width="100"
-        style="align-items: center;"
-      ></iframe>
-    </div>
-    <script src="verify.js"></script>
 
+    <!-- Navigation -->
+    <nav
+      class="sticky top-0 z-50 glass-panel border-b border-slate-200 dark:border-slate-800"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-8 h-8 bg-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30"
+            >
+              <i data-feather="shield" class="w-5 h-5"></i>
+            </div>
+            <span
+              class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-indigo-600 dark:from-brand-400 dark:to-indigo-400"
+            >
+              VerifyJS
+            </span>
+          </div>
+          <div class="flex items-center gap-4">
+            <button
+              id="themeToggle"
+              class="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-500 dark:text-slate-400"
+            >
+              <i data-feather="moon" class="w-5 h-5 block dark:hidden"></i>
+              <i data-feather="sun" class="w-5 h-5 hidden dark:block"></i>
+            </button>
+            <a
+              href="https://github.com/sahab-uab/verifyJS"
+              target="_blank"
+              class="hidden sm:flex items-center gap-2 px-4 py-1.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium hover:opacity-90 transition-opacity"
+            >
+              <i data-feather="github" class="w-4 h-4"></i>
+              <span>GitHub</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="flex flex-col lg:flex-row gap-12">
+        <!-- Left Column: Documentation -->
+        <div class="flex-1 space-y-12 min-w-0">
+          <!-- Hero Section -->
+          <div class="space-y-6">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-sm font-medium"
+            >
+              <span class="relative flex h-2 w-2">
+                <span
+                  class="animate-ping absolute inline-flex h-full w-full bg-brand-400 opacity-75"
+                ></span>
+                <span class="relative inline-flex h-2 w-2 bg-brand-500"></span>
+              </span>
+              v2.0.0 Now Available
+            </div>
+            <h1
+              class="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white"
+            >
+              Secure your forms <br class="hidden sm:block" />
+              <span class="text-brand-600 dark:text-brand-400"
+                >without the hassle.</span
+              >
+            </h1>
+            <p
+              class="text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl"
+            >
+              A lightweight, customizable, and dependency-free JavaScript
+              CAPTCHA solution to protect your web applications from automated
+              bots. It generates random CAPTCHA images that users must solve to
+              verify their human identity.
+            </p>
+            <div class="flex gap-4">
+              <a
+                href="#installation"
+                class="px-6 py-3 bg-brand-600 text-white font-semibold shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition-colors flex items-center gap-2"
+              >
+                Get Started <i data-feather="arrow-right" class="w-4 h-4"></i>
+              </a>
+              <a
+                href="https://github.com/sahab-uab/verifyJS"
+                target="_blank"
+                class="px-6 py-3 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-colors"
+              >
+                View Source
+              </a>
+            </div>
+          </div>
+
+          <!-- Features Grid -->
+          <div class="space-y-6">
+            <div class="grid sm:grid-cols-2 gap-6">
+              <div
+                class="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm"
+              >
+                <div
+                  class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4"
+                >
+                  <i data-feather="settings" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Highly Customizable</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm">
+                  Configure length, character types (digits, uppercase, special
+                  chars), and dimensions.
+                </p>
+              </div>
+              <div
+                class="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm"
+              >
+                <div
+                  class="w-10 h-10 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center mb-4"
+                >
+                  <i data-feather="feather" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Lightweight</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm">
+                  Zero dependencies. Tiny footprint. Doesn't bloat your bundle
+                  size.
+                </p>
+              </div>
+            </div>
+
+            <ul
+              class="list-disc list-inside space-y-2 text-slate-600 dark:text-slate-400 marker:text-brand-500 ml-2"
+            >
+              <li>Refresh button to generate a new CAPTCHA</li>
+              <li>Simple validation method</li>
+              <li>Prevents bots from automated form submissions</li>
+              <li>Adjustable CAPTCHA image size</li>
+            </ul>
+          </div>
+
+          <!-- Installation -->
+          <section id="installation" class="scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-2 text-slate-900 dark:text-white">
+              <i data-feather="download" class="w-5 h-5 text-brand-500"></i>
+              <h2 class="text-2xl font-bold">Installation</h2>
+            </div>
+
+            <div class="space-y-4">
+              <p class="text-slate-600 dark:text-slate-400 font-medium">
+                1. Clone the repository:
+              </p>
+              <div
+                class="bg-slate-900 overflow-hidden shadow-lg border border-slate-800"
+              >
+                <div
+                  class="flex items-center justify-between px-4 py-3 bg-slate-800/50 border-b border-slate-700"
+                >
+                  <span class="text-xs font-mono text-slate-400">Terminal</span>
+                  <button
+                    onclick="copyToClipboard('installCmd')"
+                    class="text-slate-400 hover:text-white transition-colors"
+                  >
+                    <i data-feather="copy" class="w-4 h-4"></i>
+                  </button>
+                </div>
+                <div class="p-4 overflow-x-auto custom-scrollbar">
+                  <code id="installCmd" class="font-mono text-sm text-green-400"
+                    >git clone https://github.com/codesuab/verifyjs.git</code
+                  >
+                </div>
+              </div>
+
+              <p class="text-slate-600 dark:text-slate-400 font-medium">
+                2. Include the script in your HTML:
+              </p>
+              <div
+                class="bg-slate-900 overflow-hidden shadow-lg border border-slate-800"
+              >
+                <div class="p-4 overflow-x-auto custom-scrollbar">
+                  <code class="font-mono text-sm text-slate-300">
+                    &lt;script src="core/verify.min.js"&gt;&lt;/script&gt;
+                  </code>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Usage / HTML Structure -->
+          <section class="space-y-4">
+            <div class="flex items-center gap-2 text-slate-900 dark:text-white">
+              <i data-feather="layout" class="w-5 h-5 text-brand-500"></i>
+              <h2 class="text-2xl font-bold">HTML Structure</h2>
+            </div>
+            <p class="text-slate-600 dark:text-slate-400">
+              Add the following markup to your form:
+            </p>
+            <div
+              class="bg-slate-900 overflow-hidden shadow-lg border border-slate-800"
+            >
+              <div
+                class="flex items-center justify-between px-4 py-3 bg-slate-800/50 border-b border-slate-700"
+              >
+                <span class="text-xs font-mono text-slate-400">index.html</span>
+                <button
+                  onclick="copyToClipboard('htmlStructure')"
+                  class="text-slate-400 hover:text-white transition-colors"
+                >
+                  <i data-feather="copy" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="p-4 overflow-x-auto custom-scrollbar">
+                <pre
+                  class="font-mono text-sm text-slate-300"
+                ><code id="htmlStructure">&lt;div id="captchaForm"&gt;
+  &lt;div class="captchawraper"&gt;
+    &lt;img id="captcha" width="200" height="50" alt="CAPTCHA" /&gt;
+  &lt;/div&gt;
+  &lt;div class="fild"&gt;
+    &lt;input type="text" id="captchaInput" required /&gt;
+    &lt;button type="button" onclick="captchaRefresh()"&gt;Refresh&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;button onclick="validate()"&gt;Submit&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- Configuration -->
+          <section class="space-y-4">
+            <div class="flex items-center gap-2 text-slate-900 dark:text-white">
+              <i data-feather="sliders" class="w-5 h-5 text-brand-500"></i>
+              <h2 class="text-2xl font-bold">JavaScript Configuration</h2>
+            </div>
+            <div
+              class="bg-slate-900 overflow-hidden shadow-lg border border-slate-800"
+            >
+              <div
+                class="flex items-center justify-between px-4 py-3 bg-slate-800/50 border-b border-slate-700"
+              >
+                <span class="text-xs font-mono text-slate-400">script.js</span>
+                <button
+                  onclick="copyToClipboard('jsConfig')"
+                  class="text-slate-400 hover:text-white transition-colors"
+                >
+                  <i data-feather="copy" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="p-4 overflow-x-auto custom-scrollbar">
+                <pre
+                  class="font-mono text-sm text-slate-300"
+                ><code id="jsConfig">verifyJS({
+  <span class="text-purple-400">totalDigit</span>: <span class="text-orange-400">4</span>,        <span class="text-slate-500">// Number of characters</span>
+  <span class="text-purple-400">number</span>: <span class="text-blue-400">true</span>,       <span class="text-slate-500">// Include numbers</span>
+  <span class="text-purple-400">uppercase</span>: <span class="text-blue-400">false</span>,   <span class="text-slate-500">// Include uppercase letters</span>
+  <span class="text-purple-400">specialsCharacter</span>: <span class="text-blue-400">false</span>, <span class="text-slate-500">// Include special chars</span>
+  <span class="text-purple-400">width</span>: <span class="text-orange-400">140</span>,         <span class="text-slate-500">// Canvas width</span>
+  <span class="text-purple-400">height</span>: <span class="text-orange-400">50</span>,         <span class="text-slate-500">// Canvas height</span>
+}).vJSConfig();
+
+// Set image on page load
+window.onload = () => {
+  verifyJS().vJSImgSrc("#captcha");
+};</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- Options Table -->
+          <section class="space-y-4">
+            <div class="flex items-center gap-2 text-slate-900 dark:text-white">
+              <i data-feather="list" class="w-5 h-5 text-brand-500"></i>
+              <h2 class="text-2xl font-bold">Customization Options</h2>
+            </div>
+            <p class="text-slate-600 dark:text-slate-400">
+              Modify these settings to customize your CAPTCHA:
+            </p>
+
+            <div
+              class="overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50"
+            >
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                  <thead
+                    class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold"
+                  >
+                    <tr>
+                      <th class="p-4 whitespace-nowrap">Option</th>
+                      <th class="p-4 min-w-[200px]">Description</th>
+                      <th class="p-4 whitespace-nowrap">Default</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class="divide-y divide-slate-200 dark:divide-slate-800 text-slate-600 dark:text-slate-400"
+                  >
+                    <tr
+                      class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
+                      <td
+                        class="p-4 font-mono text-brand-600 dark:text-brand-400 font-medium"
+                      >
+                        totalDigit
+                      </td>
+                      <td class="p-4">Number of characters in the CAPTCHA</td>
+                      <td class="p-4 font-mono text-slate-500">6</td>
+                    </tr>
+                    <tr
+                      class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
+                      <td
+                        class="p-4 font-mono text-brand-600 dark:text-brand-400 font-medium"
+                      >
+                        number
+                      </td>
+                      <td class="p-4">Include numbers in CAPTCHA</td>
+                      <td class="p-4 font-mono text-slate-500">true</td>
+                    </tr>
+                    <tr
+                      class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
+                      <td
+                        class="p-4 font-mono text-brand-600 dark:text-brand-400 font-medium"
+                      >
+                        uppercase
+                      </td>
+                      <td class="p-4">Include uppercase letters</td>
+                      <td class="p-4 font-mono text-slate-500">true</td>
+                    </tr>
+                    <tr
+                      class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
+                      <td
+                        class="p-4 font-mono text-brand-600 dark:text-brand-400 font-medium"
+                      >
+                        specialsCharacter
+                      </td>
+                      <td class="p-4">Include special characters</td>
+                      <td class="p-4 font-mono text-slate-500">true</td>
+                    </tr>
+                    <tr
+                      class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
+                      <td
+                        class="p-4 font-mono text-brand-600 dark:text-brand-400 font-medium"
+                      >
+                        width
+                      </td>
+                      <td class="p-4">Width of CAPTCHA image</td>
+                      <td class="p-4 font-mono text-slate-500">200</td>
+                    </tr>
+                    <tr
+                      class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
+                      <td
+                        class="p-4 font-mono text-brand-600 dark:text-brand-400 font-medium"
+                      >
+                        height
+                      </td>
+                      <td class="p-4">Height of CAPTCHA image</td>
+                      <td class="p-4 font-mono text-slate-500">50</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Contributing & License -->
+          <section class="space-y-6 pt-4">
+            <div>
+              <h3
+                class="text-xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2"
+              >
+                <i
+                  data-feather="git-pull-request"
+                  class="w-5 h-5 text-brand-500"
+                ></i>
+                Contributing
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400">
+                If you'd like to improve VerifyJS, feel free to fork the
+                repository and submit a pull request.
+              </p>
+            </div>
+            <div>
+              <h3
+                class="text-xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2"
+              >
+                <i data-feather="file-text" class="w-5 h-5 text-brand-500"></i>
+                License
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400">
+                This project is licensed under the MIT License.
+              </p>
+            </div>
+          </section>
+
+          <!-- Support Section -->
+          <section class="pt-8 border-t border-slate-200 dark:border-slate-800">
+            <h3 class="text-xl font-bold mb-6">Show Support ❤️</h3>
+            <div class="flex flex-wrap gap-4">
+              <a
+                href="https://github.com/sahab-uab/verifyJS"
+                target="_blank"
+                class="group flex items-center gap-3 px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-brand-500 transition-all"
+              >
+                <div
+                  class="bg-slate-100 dark:bg-slate-700 p-2 group-hover:bg-brand-50 dark:group-hover:bg-brand-900/30 transition-colors"
+                >
+                  <i
+                    data-feather="star"
+                    class="w-5 h-5 text-yellow-500 fill-yellow-500"
+                  ></i>
+                </div>
+                <div>
+                  <div class="text-sm font-semibold">Star on GitHub</div>
+                  <div class="text-xs text-slate-500">
+                    Support the development
+                  </div>
+                </div>
+              </a>
+              <a
+                href="https://github.com/sahab-uab/verifyJS/issues"
+                target="_blank"
+                class="group flex items-center gap-3 px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-red-500 transition-all"
+              >
+                <div
+                  class="bg-slate-100 dark:bg-slate-700 p-2 group-hover:bg-red-50 dark:group-hover:bg-red-900/30 transition-colors"
+                >
+                  <i data-feather="x-octagon" class="w-5 h-5 text-red-500"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-semibold">Report Issue</div>
+                  <div class="text-xs text-slate-500">Help us improve</div>
+                </div>
+              </a>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right Column: Interactive Demo -->
+        <div class="w-full lg:w-[400px] flex-shrink-0">
+          <div class="sticky top-24 space-y-6">
+            <div
+              class="glass-panel p-8 shadow-2xl shadow-brand-900/10 border border-white/50 dark:border-slate-700/50 relative overflow-hidden group"
+            >
+              <!-- Glow effect -->
+              <div
+                class="absolute -top-24 -right-24 w-48 h-48 bg-brand-500/10 blur-3xl group-hover:bg-brand-500/20 transition-all duration-700"
+              ></div>
+
+              <div class="relative">
+                <div class="flex items-center justify-between mb-8">
+                  <h3 class="text-xl font-bold text-slate-900 dark:text-white">
+                    Live Demo
+                  </h3>
+                  <span
+                    class="flex items-center gap-1.5 px-2.5 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium border border-green-200 dark:border-green-800"
+                  >
+                    <span class="w-1.5 h-1.5 bg-green-500 animate-pulse"></span>
+                    Interactive
+                  </span>
+                </div>
+
+                <form
+                  onsubmit="event.preventDefault(); validate();"
+                  class="space-y-6"
+                >
+                  <!-- Captcha Display Area -->
+                  <div class="space-y-2">
+                    <label
+                      class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                      >Security Check</label
+                    >
+                    <div class="relative group/refresh">
+                      <div
+                        class="bg-slate-100 dark:bg-slate-800/50 p-4 border-2 border-dashed border-slate-300 dark:border-slate-700 flex justify-center items-center min-h-[80px]"
+                      >
+                        <img
+                          id="captcha"
+                          alt="CAPTCHA"
+                          class="mix-blend-multiply dark:mix-blend-normal filter dark:invert-[.1] select-none cursor-pointer"
+                          onclick="captchaRefresh()"
+                          title="Click to refresh"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onclick="captchaRefresh()"
+                        class="absolute top-2 right-2 p-2 bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 text-slate-500 hover:text-brand-600 hover:border-brand-300 transition-all opacity-0 group-hover/refresh:opacity-100 focus:opacity-100"
+                        title="Refresh CAPTCHA"
+                      >
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                    <p class="text-xs text-slate-500 text-center">
+                      Click image to refresh code
+                    </p>
+                  </div>
+
+                  <!-- Input Area -->
+                  <div class="space-y-2">
+                    <label
+                      for="captchaInput"
+                      class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                      >Verification Code</label
+                    >
+                    <input
+                      type="text"
+                      id="captchaInput"
+                      placeholder="Enter the code above"
+                      class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 outline-none transition-all font-mono text-center text-lg tracking-widest placeholder:normal-case placeholder:tracking-normal placeholder:text-slate-400"
+                      autocomplete="off"
+                    />
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <button
+                    type="submit"
+                    class="w-full py-3.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-brand-500/25 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                  >
+                    Verify Code
+                    <i data-feather="check-circle-2" class="w-5 h-5"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Status Notification (Hidden by default) -->
+            <div
+              id="statusToast"
+              class="hidden transform transition-all duration-300 opacity-0 translate-y-2"
+            >
+              <div class="p-4 flex items-center gap-3 shadow-lg">
+                <div id="statusIcon" class="p-2"></div>
+                <div>
+                  <h4 id="statusTitle" class="font-bold text-sm"></h4>
+                  <p
+                    id="statusMsg"
+                    class="text-xs text-slate-500 dark:text-slate-400"
+                  ></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="border-t border-slate-200 dark:border-slate-800 mt-12 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-center gap-4"
+        >
+          <p class="text-slate-500 text-sm">
+            © 2023 VerifyJS. Licensed under MIT.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- VerifyJS Logic Implementation (Simulated for Demo) -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="/core/verify.min.js"></script>
     <script>
-      // configure
+      feather.replace();
+
       verifyJS({
         totalDigit: 4,
         number: true,
@@ -71,24 +661,86 @@
         height: 50,
       }).vJSConfig();
 
-      // set image
       window.onload = () => {
         verifyJS().vJSImgSrc("#captcha");
       };
+
       function captchaRefresh() {
         verifyJS().vJSImgRefreshSrc("#captcha");
       }
 
-      // validation captua
       function validate() {
         const captucaFild = document.getElementById("captchaInput").value;
         let status = verifyJS().vJSCheck(captucaFild);
         if (status) {
-          alert("Your are pass");
+          showToast(status);
         } else {
-          alert("Sorry try again!");
+          showToast(status);
         }
       }
+
+      // Toast Notification System
+      function showToast(success) {
+        const toast = document.getElementById("statusToast");
+        const icon = document.getElementById("statusIcon");
+        const title = document.getElementById("statusTitle");
+        const msg = document.getElementById("statusMsg");
+
+        toast.classList.remove("hidden");
+        // Trigger reflow
+        void toast.offsetWidth;
+        toast.classList.remove("opacity-0", "translate-y-2");
+
+        if (success) {
+          toast.className =
+            "mt-4 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 p-4 rounded-xl border flex items-center gap-3 shadow-lg transform transition-all duration-300";
+          icon.className =
+            "p-2 rounded-full bg-green-100 dark:bg-green-800 text-green-600 dark:text-green-200";
+          icon.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i>';
+          title.textContent = "Verification Successful";
+          title.className =
+            "font-bold text-sm text-green-800 dark:text-green-200";
+          msg.textContent = "You have passed the security check.";
+        } else {
+          toast.className =
+            "mt-4 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 p-4 rounded-xl border flex items-center gap-3 shadow-lg transform transition-all duration-300";
+          icon.className =
+            "p-2 rounded-full bg-red-100 dark:bg-red-800 text-red-600 dark:text-red-200";
+          icon.innerHTML = '<i data-lucide="x" class="w-5 h-5"></i>';
+          title.textContent = "Verification Failed";
+          title.className = "font-bold text-sm text-red-800 dark:text-red-200";
+          msg.textContent = "The code does not match. Please try again.";
+        }
+        lucide.createIcons();
+      }
+
+      function hideToast() {
+        const toast = document.getElementById("statusToast");
+        toast.classList.add("opacity-0", "translate-y-2");
+        setTimeout(() => toast.classList.add("hidden"), 300);
+      }
+
+      function copyToClipboard(elementId) {
+        const text = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(text);
+        // Could add a small 'Copied!' tooltip here
+      }
+
+      // Dark Mode Toggle Logic
+      const themeToggle = document.getElementById("themeToggle");
+      const html = document.documentElement;
+
+      // Check system preference
+      if (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      ) {
+        html.classList.add("dark");
+      }
+
+      themeToggle.addEventListener("click", () => {
+        html.classList.toggle("dark");
+      });
     </script>
   </body>
 </html>
