@@ -24,11 +24,11 @@ Check out a live demo: [Click for demo](https://codesuab.github.io/verifyJS/)
    ```
 2. Include the JavaScript file in your HTML:
    ```html
-   <script src="verify.js"></script>
+   <script src="core/verify.js"></script>
    ```
 3. Or include the minified JavaScript file in your HTML:
    ```html
-   <script src="verify.min.js"></script>
+   <script src="core/verify.min.js"></script>
    ```
 
 ## Usage
