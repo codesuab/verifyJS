@@ -14,7 +14,7 @@
 
 ## Demo
 
-Check out a live demo: [Click for demo](https://codesuab-project.github.io/verifyJS/)
+Check out a live demo: [Click for demo](https://codesuab.github.io/verifyJS/)
 
 ## Installation
 
